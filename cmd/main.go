@@ -2,11 +2,12 @@ package main
 
 import (
 	"encoding/json"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
 
-	model "github.com/matthausen/n2yo/src/model"
+	models "github.com/matthausen/n2yo/models"
 )
 
 var (
@@ -19,18 +20,24 @@ func index(w http.ResponseWriter, r *http.Request) {
 	satInfo := getSatInfo()
 	jsonData, err := json.Marshal(satInfo)
 	if err != nil {
-		log.Fatalf("Could not marhsla response: %v", err)
+		log.Fatalf("Could not marshal response: %v", err)
 	}
-	w.Write(jsonData)
+	// w.Write(jsonData)
+	t, err := template.ParseFiles("../templates/index.html")
+
+	if err != nil {
+		log.Fatalf("Error parsing hml file")
+	}
+	t.Execute(w, jsonData)
 }
 
-func getSatInfo() model.Response {
+func getSatInfo() models.Response {
 	resp, err := http.Get(baseURL + apiKey)
 	if err != nil {
 		log.Fatalf("Could not read from endpoint %v", err)
 	}
 
-	var satInfo model.Response
+	var satInfo models.Response
 	if err := json.NewDecoder(resp.Body).Decode(&satInfo); err != nil {
 		log.Println("Could not decode body:", err)
 	}
@@ -40,6 +47,5 @@ func getSatInfo() model.Response {
 
 func main() {
 	http.HandleFunc("/", index)
-	getSatInfo()
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

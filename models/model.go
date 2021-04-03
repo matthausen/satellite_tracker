@@ -1,4 +1,4 @@
-package src
+package models
 
 type (
 	// Response type of the API
