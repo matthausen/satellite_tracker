@@ -3,8 +3,8 @@ package models
 type (
 	// Response type of the API
 	Response struct {
-		Info      Info
-		Positions []Position
+		Info      Info       `json:"info"`
+		Positions []Position `json:"positions"`
 	}
 
 	// Info type of the satellite

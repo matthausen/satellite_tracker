@@ -1,51 +1,28 @@
 package main
 
 import (
-	"encoding/json"
-	"html/template"
+	"context"
 	"log"
-	"net/http"
 	"os"
+	"os/signal"
 
-	models "github.com/matthausen/n2yo/models"
+	"github.com/matthausen/n2yo/server"
 )
-
-var (
-	baseURL = "https://api.n2yo.com/rest/v1/satellite/positions/25544/51.508/-0.125/0/2/&apiKey="
-	apiKey  = os.Getenv("API_KEY")
-)
-
-func index(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	satInfo := getSatInfo()
-	jsonData, err := json.Marshal(satInfo)
-	if err != nil {
-		log.Fatalf("Could not marshal response: %v", err)
-	}
-	// w.Write(jsonData)
-	t, err := template.ParseFiles("../templates/index.html")
-
-	if err != nil {
-		log.Fatalf("Error parsing hml file")
-	}
-	t.Execute(w, jsonData)
-}
-
-func getSatInfo() models.Response {
-	resp, err := http.Get(baseURL + apiKey)
-	if err != nil {
-		log.Fatalf("Could not read from endpoint %v", err)
-	}
-
-	var satInfo models.Response
-	if err := json.NewDecoder(resp.Body).Decode(&satInfo); err != nil {
-		log.Println("Could not decode body:", err)
-	}
-
-	return satInfo
-}
 
 func main() {
-	http.HandleFunc("/", index)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+
+	ctx, cancel := context.WithCancel(context.Background())
+
+	go func() {
+		oscall := <-c
+		log.Printf("System call:%+v", oscall)
+		cancel()
+	}()
+
+	if err := server.GracefullyShutDown(ctx); err != nil {
+		log.Printf("Failed to serve:+%v\n", err)
+	}
 }

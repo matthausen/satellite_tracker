@@ -1,0 +1,10 @@
+{{define "map"}}
+<h4>Satellite Info:</h4>
+<p>{{.Info.Satid}}</p>
+<p>{{.Info.Satname}}</p>
+</br>
+<h4>Current Position:</h4>
+{{range $i, $e := .Positions }} {{if (eq $i 1)}}
+<p>Latitude {{.Latitude}}</p>
+<p>Longitude: {{.Longitude}}</p>
+<p>Altitude: {{.Altitude}}</p> {{end}} {{end}} {{end}}

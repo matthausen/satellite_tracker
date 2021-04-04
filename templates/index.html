@@ -1,15 +1,50 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <title>A static page</title>
-    <link rel="stylesheet" href="/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin="" />
+    <style>
+        body {
+            color: grey
+        }
+    </style>
+    <title>Satellites</title>
 </head>
 
 <body>
-    <h1>Hello from a static page</h1>
-    <!-- {{range .jsonData}} {{.Info}} {{end}} -->
+    {{template "map" .}}
+    <div id="my-map" style="width:800px; height:600px; "></div>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+    <script>
+        // Get the info to display on the map
+        // Creating a map object
+        const container = document.getElementById('my-map')
+        if (container) {
+            var mymap = L.map('my-map').setView([51.505, -0.09], 5);
+
+        } else {
+            console.log('no map id found')
+        }
+
+        // Creating a Layer object
+        var layer = new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        });
+
+        // Adding layer to the map
+        mymap.addLayer(layer);
+
+        // Add a cirlce
+        var circle = L.circle([51.508, -0.11], {
+            color: 'red',
+            fillColor: '#f03',
+            fillOpacity: 0.5,
+            radius: 500
+        }).addTo(mymap);
+    </script>
 </body>
 
 </html>
