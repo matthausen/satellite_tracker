@@ -19,10 +19,12 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
     <script>
         // Get the info to display on the map
+	const data = {{.}}
         // Creating a map object
         const container = document.getElementById('my-map')
         if (container) {
-            var mymap = L.map('my-map').setView([51.505, -0.09], 5);
+            var mymap = L.map('my-map').setView([data.positions[1].satlatitude, data.positions[1].satlongitude], 5);
+
 
         } else {
             console.log('no map id found')
@@ -38,7 +40,7 @@
         mymap.addLayer(layer);
 
         // Add a cirlce
-        var circle = L.circle([51.508, -0.11], {
+        var circle = L.circle([data.positions[1].satlatitude, data.positions[1].satlongitude], {
             color: 'red',
             fillColor: '#f03',
             fillOpacity: 0.5,
